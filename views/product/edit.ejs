@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Product</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="container mt-4">
+    <h2>Edit Product</h2>
+    <form action="/api/updateproduct/<%= product.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+      
+      <label>Product Name:</label>
+      <input type="text" name="productName" value="<%= product.productName %>" required class="form-control" />
+
+      <label>HSN/SAC:</label>
+      <input type="text" name="hsn_sac" value="<%= product.hsn_sac %>" required class="form-control" />
+
+      <label>GST:</label>
+      <input type="number" name="gst" value="<%= product.gst %>" required class="form-control" />
+
+      <label>Product Description:</label>
+      <textarea name="productDescription" required class="form-control"><%= product.productDescription %></textarea>
+
+      <label>Inventory Type:</label>
+      <select name="inventoryType" required class="form-control">
+        <option value="Finished Goods" <%= product.inventoryType === "Finished Goods" ? "selected" : "" %>>Finished Goods</option>
+        <option value="Rejection" <%= product.inventoryType === "Rejection" ? "selected" : "" %>>Rejection</option>
+        <option value="Raw Material" <%= product.inventoryType === "Raw Material" ? "selected" : "" %>>Raw Material</option>
+      </select>
+
+      <label>Sell Price:</label>
+      <input type="number" step="0.01" name="sellPrice" value="<%= product.sellPrice %>" required class="form-control" />
+
+      <label>Product Image:</label>
+      <input type="file" name="file" accept="image/*" class="form-control" />
+      <p>Current Image: <img src="<%= product.productImage %>" alt="Product Image" width="100"></p>
+
+      <!-- Advanced Tab -->
+      <label>Product Tag:</label>
+      <input type="text" name="productTag" value="<%= product.productTag %>" required class="form-control" />
+
+      <label>Net Weight:</label>
+      <input type="number" step="0.01" name="netWeight" value="<%= product.netWeight %>" required class="form-control" />
+
+      <label>Gross Weight:</label>
+      <input type="number" step="0.01" name="grossWeight" value="<%= product.grossWeight %>" required class="form-control" />
+
+      <label>Unit:</label>
+      <select name="unit" required class="form-control">
+        <option value="MT (KG)" <%= product.unit === "MT (KG)" ? "selected" : "" %>>MT (KG)</option>
+        <option value="LT (ML)" <%= product.unit === "LT (ML)" ? "selected" : "" %>>LT (ML)</option>
+        <option value="TON" <%= product.unit === "TON" ? "selected" : "" %>>TON</option>
+        <option value="Pieces" <%= product.unit === "Pieces" ? "selected" : "" %>>Pieces</option>
+        <option value="KG (KG)" <%= product.unit === "KG (KG)" ? "selected" : "" %>>KG (KG)</option>
+        <option value="BOTTLES (KG)" <%= product.unit === "BOTTLES (KG)" ? "selected" : "" %>>BOTTLES (KG)</option>
+        <option value="JAR (GM)" <%= product.unit === "JAR (GM)" ? "selected" : "" %>>JAR (GM)</option>
+        <option value="CAN (KG)" <%= product.unit === "CAN (KG)" ? "selected" : "" %>>CAN (KG)</option>
+        <option value="BOX (GM)" <%= product.unit === "BOX (GM)" ? "selected" : "" %>>BOX (GM)</option>
+        <option value="PCS (KG)" <%= product.unit === "PCS (KG)" ? "selected" : "" %>>PCS (KG)</option>
+        <option value="BAGS (KG)" <%= product.unit === "BAGS (KG)" ? "selected" : "" %>>BAGS (KG)</option>
+      </select>
+
+      <label>Dimensions (Length):</label>
+      <input type="number" step="0.01" name="Dimensionslength" value="<%= product.Dimensionslength %>" required class="form-control" />
+
+      <label>Dimensions (Width):</label>
+      <input type="number" step="0.01" name="Dimensionswidth" value="<%= product.Dimensionswidth %>" required class="form-control" />
+
+      <label>Dimensions (Height):</label>
+      <input type="number" step="0.01" name="Dimensionsheight" value="<%= product.Dimensionsheight %>" required class="form-control" />
+
+      <!-- Variants -->
+      <h3>Variants</h3>
+      <div id="existingVariants">
+        <% (product.variants || []).forEach(function(variant, index) { %>
+          <div id="variant_<%= index %>">
+            <label for="variantName_<%= index %>">Variant Name:</label>
+            <input type="text" id="variantName_<%= index %>" name="variantName_<%= index %>" value="<%= variant.variantName %>">
+
+            <label for="variantImage_<%= index %>">Variant Image:</label>
+            <input type="file" id="variantImage_<%= index %>" name="variantImage_<%= index %>">
+            <button type="button" onclick="removeVariant(<%= index %>)">Remove</button>
+          </div>
+        <% }); %>
+      </div>
+
+      <div id="variant-container">
+        <h4>Add More Variants</h4>
+        <button type="button" onclick="addVariant()">Add Variant</button>
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Update Product</button>
+    </form>
+
+    <script>
+      function addVariant() {
+        const variantContainer = document.getElementById("variant-container");
+        const variantIndex = variantContainer.children.length;
+
+        const variantDiv = document.createElement("div");
+        variantDiv.classList.add("variant");
+        variantDiv.setAttribute("id", `variant_${variantIndex}`);
+
+        const variantNameLabel = document.createElement("label");
+        variantNameLabel.setAttribute("for", `variantName_${variantIndex}`);
+        variantNameLabel.textContent = "Variant Name:";
+
+        const variantNameInput = document.createElement("input");
+        variantNameInput.setAttribute("type", "text");
+        variantNameInput.setAttribute("id", `variantName_${variantIndex}`);
+        variantNameInput.setAttribute("name", `variantName_${variantIndex}`);
+
+        const variantImageLabel = document.createElement("label");
+        variantImageLabel.setAttribute("for", `variantImage_${variantIndex}`);
+        variantImageLabel.textContent = "Variant Image:";
+
+        const variantImageInput = document.createElement("input");
+        variantImageInput.setAttribute("type", "file");
+        variantImageInput.setAttribute("id", `variantImage_${variantIndex}`);
+        variantImageInput.setAttribute("name", `variantImage_${variantIndex}`);
+
+        const removeButton = document.createElement("button");
+        removeButton.setAttribute("type", "button");
+        removeButton.textContent = "Remove";
+        removeButton.onclick = () => removeVariant(variantIndex);
+
+        variantDiv.appendChild(variantNameLabel);
+        variantDiv.appendChild(variantNameInput);
+        variantDiv.appendChild(variantImageLabel);
+        variantDiv.appendChild(variantImageInput);
+        variantDiv.appendChild(removeButton);
+
+        variantContainer.appendChild(variantDiv);
+      }
+
+      function removeVariant(index) {
+        const variantDiv = document.getElementById(`variant_${index}`);
+        variantDiv.remove();
+      }
+    </script>
+  </body>
+</html>

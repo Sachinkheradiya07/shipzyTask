@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Upload</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      function addVariant() {
+        const variantContainer = document.getElementById("variant-container");
+        const variantIndex = variantContainer.children.length - 1; // -1 to exclude the "Add Variant" button
+
+        const variantDiv = document.createElement("div");
+        variantDiv.classList.add("variant", "mb-3", "p-3", "border", "rounded");
+        variantDiv.setAttribute("id", `variant_${variantIndex}`);
+
+        const variantNameLabel = document.createElement("label");
+        variantNameLabel.textContent = "Variant Name:";
+        variantNameLabel.classList.add("form-label");
+
+        const variantNameInput = document.createElement("input");
+        variantNameInput.setAttribute("type", "text");
+        variantNameInput.setAttribute("name", `variantName_${variantIndex}`);
+        variantNameInput.classList.add("form-control");
+
+        const variantImageLabel = document.createElement("label");
+        variantImageLabel.textContent = "Variant Image:";
+        variantImageLabel.classList.add("form-label", "mt-2");
+
+        const variantImageInput = document.createElement("input");
+        variantImageInput.setAttribute("type", "file");
+        variantImageInput.setAttribute("name", `variantImage_${variantIndex}`);
+        variantImageInput.classList.add("form-control");
+
+        const removeButton = document.createElement("button");
+        removeButton.setAttribute("type", "button");
+        removeButton.textContent = "Remove";
+        removeButton.classList.add("btn", "btn-danger", "btn-sm", "mt-2");
+        removeButton.onclick = () => removeVariant(variantIndex);
+
+        variantDiv.appendChild(variantNameLabel);
+        variantDiv.appendChild(variantNameInput);
+        variantDiv.appendChild(variantImageLabel);
+        variantDiv.appendChild(variantImageInput);
+        variantDiv.appendChild(removeButton);
+
+        variantContainer.insertBefore(
+          variantDiv,
+          document.getElementById("addVariantBtn")
+        );
+      }
+
+      function removeVariant(index) {
+        const variantDiv = document.getElementById(`variant_${index}`);
+        if (variantDiv) {
+          variantDiv.remove();
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4 text-center">Upload Product</h1>
+      <form
+        action="/api/create"
+        method="POST"
+        enctype="multipart/form-data"
+        class="p-4 border rounded bg-light"
+      >
+        <div class="mb-3">
+          <label class="form-label" for="productName">Product Name:</label>
+          <input
+            type="text"
+            id="productName"
+            name="productName"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="productImage">Product Image:</label>
+          <input
+            type="file"
+            id="productImage"
+            name="productImage"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="gst">GST:</label>
+            <input
+              type="text"
+              id="gst"
+              name="gst"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="hsnSac">HSN/SAC:</label>
+            <input
+              type="text"
+              id="hsn_sac"
+              name="hsn_sac"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="description">Description:</label>
+          <textarea
+            id="productDescription"
+            name="productDescription"
+            class="form-control"
+          ></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="inventoryType">Inventory Type:</label>
+          <select
+            id="inventoryType"
+            name="inventoryType"
+            class="form-select"
+            required
+          >
+            <option value="Finished Goods">Finished Goods</option>
+            <option value="Rejection">Rejection</option>
+            <option value="Raw Material">Raw Material</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="productTag">Product Tag:</label>
+          <input
+            type="text"
+            id="productTag"
+            name="productTag"
+            class="form-control"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="unit">Unit:</label>
+          <select id="unit" name="unit" class="form-select" required>
+            <option value="MT (KG)">MT (KG)</option>
+            <option value="LT (ML)">LT (ML)</option>
+            <option value="TON">TON</option>
+            <option value="Pieces">Pieces</option>
+            <option value="KG (KG)">KG (KG)</option>
+            <option value="BOTTLES (KG)">BOTTLES (KG)</option>
+            <option value="JAR (GM)">JAR (GM)</option>
+            <option value="CAN (KG)">CAN (KG)</option>
+            <option value="BOX (GM)">BOX (GM)</option>
+            <option value="PCS (KG)">PCS (KG)</option>
+            <option value="BAGS (KG)">BAGS (KG)</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="netWeight">Net Weight:</label>
+            <input
+              type="number"
+              id="netWeight"
+              name="netWeight"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="grossWeight">Gross Weight:</label>
+            <input
+              type="number"
+              id="grossWeight"
+              name="grossWeight"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="sellPrice">Sell Price:</label>
+            <input
+              type="number"
+              id="sellPrice"
+              name="sellPrice"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="dimensionLength">Length:</label>
+            <input
+              type="number"
+              id="dimensionLength"
+              name="Dimensionslength"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="dimensionWidth">Width:</label>
+            <input
+              type="number"
+              id="dimensionWidth"
+              name="Dimensionswidth"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="dimensionHeight">Height:</label>
+            <input
+              type="number"
+              id="dimensionHeight"
+              name="Dimensionsheight"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+
+        <div id="variant-container" class="mt-4">
+          <h2 class="mb-3">Variants</h2>
+          <button
+            type="button"
+            id="addVariantBtn"
+            class="btn btn-primary"
+            onclick="addVariant()"
+          >
+            Add Variant
+          </button>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-4 w-100">
+          Upload Product
+        </button>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
