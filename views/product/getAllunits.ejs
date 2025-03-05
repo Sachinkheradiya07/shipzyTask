@@ -7,35 +7,43 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
     <script>
-      function showForm(type, unit = null) {
-        document.getElementById("unitTable").style.display = "none";
-        document.getElementById("createForm").style.display = "none";
-        document.getElementById("editForm").style.display = "none";
+      function showForm(mode, unit = null) {
+        const modalTitle = document.getElementById("modalTitle");
+        const unitForm = document.getElementById("unitForm");
+        const unitSubmit = document.getElementById("unitSubmit");
+        const unitMethod = document.getElementById("unitMethod");
 
-        if (type === "create") {
-          document.getElementById("createForm").style.display = "block";
-        } else if (type === "edit" && unit) {
+        if (mode === "create") {
+          modalTitle.innerText = "Create New Product Unit";
+          unitForm.action = "/unite/create-unit";
+          unitSubmit.innerText = "Create";
+          unitMethod.value = "POST";
+
+          // Reset Fields
+          document.getElementById("unitId").value = "";
+          document.getElementById("orderUnit").value = "";
+          document.getElementById("packingUnit").value = "";
+          document.getElementById("weight").value = "";
+          document.getElementById("noteForMe").value = "";
+        } else if (mode === "edit" && unit) {
           const parsedUnit = JSON.parse(decodeURIComponent(unit));
-          document.getElementById("editId").value = parsedUnit.id;
-          document.getElementById("editOrderUnit").value = parsedUnit.orderUnit;
-          document.getElementById("editPackingUnit").value =
-            parsedUnit.packingUnit;
-          document.getElementById("editWeight").value = parsedUnit.weight;
-          document.getElementById("editNote").value = parsedUnit.noteForMe;
 
-          // ✅ Set correct action URL
-          document.getElementById(
-            "editUnitForm"
-          ).action = `/unite/edit/${parsedUnit.id}?_method=PUT`;
+          modalTitle.innerText = "Edit Product Unit";
+          unitForm.action = `/unite/edit/${parsedUnit.id}?_method=PUT`;
+          unitSubmit.innerText = "Update";
+          unitMethod.value = "PUT";
 
-          document.getElementById("editForm").style.display = "block";
+          // Populate Fields
+          document.getElementById("unitId").value = parsedUnit.id;
+          document.getElementById("orderUnit").value = parsedUnit.orderUnit;
+          document.getElementById("packingUnit").value = parsedUnit.packingUnit;
+          document.getElementById("weight").value = parsedUnit.weight;
+          document.getElementById("noteForMe").value = parsedUnit.noteForMe;
         }
-      }
 
-      function goBack() {
-        document.getElementById("createForm").style.display = "none";
-        document.getElementById("editForm").style.display = "none";
-        document.getElementById("unitTable").style.display = "block";
+        // Show Modal
+        var myModal = new bootstrap.Modal(document.getElementById("unitModal"));
+        myModal.show();
       }
     </script>
   </head>
@@ -100,78 +108,77 @@
         <p class="text-center text-danger">No units found.</p>
         <% } %>
       </div>
+    </div>
 
-      <!-- Create Form -->
-      <div id="createForm" style="display: none">
-        <h2>Create New Product Unit</h2>
-        <form action="/unite/create-unit" method="POST">
-          <label>Order Unit:</label>
-          <input
-            type="text"
-            name="orderUnit"
-            required
-            class="form-control"
-          /><br />
-          <label>Packing Unit:</label>
-          <input type="text" name="packingUnit" class="form-control" /><br />
-          <label>Weight:</label>
-          <input
-            type="number"
-            name="weight"
-            step="0.01"
-            class="form-control"
-          /><br />
-          <label>Note:</label>
-          <textarea name="noteForMe" class="form-control"></textarea><br />
-          <button type="submit" class="btn btn-success">Create</button>
-          <button type="button" class="btn btn-secondary" onclick="goBack()">
-            Back
-          </button>
-        </form>
-      </div>
-
-      <!-- Edit Form -->
-      <div id="editForm" style="display: none">
-        <h2>Edit Product Unit</h2>
-        <form id="editUnitForm" action="" method="POST">
-          <input type="hidden" name="_method" value="PUT" />
-          <input type="hidden" name="id" id="editId" />
-          <label>Order Unit:</label>
-          <input
-            type="text"
-            name="orderUnit"
-            id="editOrderUnit"
-            required
-            class="form-control"
-          /><br />
-          <label>Packing Unit:</label>
-          <input
-            type="text"
-            name="packingUnit"
-            id="editPackingUnit"
-            class="form-control"
-          /><br />
-          <label>Weight:</label>
-          <input
-            type="number"
-            name="weight"
-            id="editWeight"
-            step="0.01"
-            class="form-control"
-          /><br />
-          <label>Note:</label>
-          <textarea
-            name="noteForMe"
-            id="editNote"
-            class="form-control"
-          ></textarea
-          ><br />
-          <button type="submit" class="btn btn-warning">Update</button>
-          <button type="button" class="btn btn-secondary" onclick="goBack()">
-            Back
-          </button>
-        </form>
+    <!--Create/Edit Form -->
+    <div class="modal fade" id="unitModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="modalTitle" class="modal-title">Create New Product Unit</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="unitForm" action="/unite/create-unit" method="POST">
+              <input
+                type="hidden"
+                name="_method"
+                id="unitMethod"
+                value="POST"
+              />
+              <input type="hidden" name="id" id="unitId" />
+              <div class="mb-3">
+                <label class="form-label">Order Unit:</label>
+                <input
+                  type="text"
+                  name="orderUnit"
+                  id="orderUnit"
+                  required
+                  class="form-control"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Packing Unit:</label>
+                <input
+                  type="text"
+                  name="packingUnit"
+                  id="packingUnit"
+                  class="form-control"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Weight:</label>
+                <input
+                  type="number"
+                  name="weight"
+                  id="weight"
+                  step="0.01"
+                  class="form-control"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Note:</label>
+                <textarea
+                  name="noteForMe"
+                  id="noteForMe"
+                  class="form-control"
+                ></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" id="unitSubmit" class="btn btn-success">
+                  Create
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
